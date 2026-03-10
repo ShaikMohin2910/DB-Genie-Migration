@@ -1,4 +1,6 @@
 # .github/workflows/dynamic-genie-migration.yml
+# CORRECTED to handle the nested project directory structure.
+
 name: "Dynamic Databricks Genie Migration (Windows)"
 
 on:
@@ -32,6 +34,11 @@ jobs:
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        
+        # THIS IS THE FIX: Tell this step to run from inside the nested folder
+        # where your databricks.yml file is located.
+        working-directory: ./DB-Genie-Migration
+        
         shell: bash
         run: |
           # Construct the dynamic name for the new Genie Space
