@@ -1,0 +1,62 @@
+# .github/workflows/dynamic-genie-migration.yml
+# ADDED a debugging step to display the contents of databricks.yml.
+
+name: "Dynamic Databricks Genie Migration (Windows)"
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_genie_space_id:
+        description: 'The ID of the source Genie Workspace to clone'
+        required: true
+        default: '01f1072f05b914caa84f451e2cb288e2'
+      source_catalog:
+        description: 'The name of the source catalog (e.g., adm_demo)'
+        required: true
+        default: 'adm_demo'
+      target_catalog:
+        description: 'The name of the target catalog (e.g., test1)'
+        required: true
+        default: 'test1'
+      new_genie_space_name:
+        description: 'A name for the new Genie Workspace to be created'
+        required: true
+        default: 'Migrated Space - Manual Run'
+
+jobs:
+  migrate-genie-workspace:
+    runs-on: windows-latest
+    
+    steps:
+      # Step 1: Check out the repository's code
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up the Databricks CLI
+      - name: Set up Databricks CLI
+        uses: databricks/setup-cli@v0.218.0
+
+      # --- NEW DEBUGGING STEP ---
+      # Step 3: Display the content of the bundle file to check for invisible characters or errors.
+      - name: Debug: Display databricks.yml content
+        shell: bash
+        run: |
+          echo "--- Start of databricks.yml content ---"
+          cat databricks.yml
+          echo "--- End of databricks.yml content ---"
+
+      # Step 4: Deploy the Databricks Asset Bundle
+      - name: Deploy Databricks Bundle with Dynamic Parameters
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        shell: bash
+        run: |
+          databricks bundle deploy --target dev --vars '{
+            "source_genie_space_id": "${{ github.event.inputs.source_genie_space_id }}",
+            "source_catalog_name": "${{ github.event.inputs.source_catalog }}",
+            "target_catalog_name": "${{ github.event.inputs.target_catalog }}",
+            "new_genie_space_name": "${{ github.event.inputs.new_genie_space_name }}"
+          }'
+
+
