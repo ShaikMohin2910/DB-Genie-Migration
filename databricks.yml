@@ -1,0 +1,15 @@
+bundle:
+  name: DB-Genie-Migration
+ 
+variables:
+  catalog:
+    default: adm_demo
+ 
+targets:
+  dev:
+    variables:
+      catalog: adm_demo
+ 
+  qa:
+    variables:
+      catalog: test1
