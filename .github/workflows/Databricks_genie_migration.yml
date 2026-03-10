@@ -48,6 +48,7 @@ jobs:
           # Use secrets to securely provide Databricks authentication.
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          shell: bash
         run: |
           databricks bundle deploy --target dev --vars '{
             "source_genie_space_id": "${{ github.event.inputs.source_genie_space_id }}",
