@@ -39,7 +39,7 @@ jobs:
       # Step 2: Set up the Databricks CLI
       # This action supports Windows, Linux, and macOS.
       - name: Set up Databricks CLI
-        uses: databricks/setup-cli@v0
+        uses: databricks/setup-cli@v0.218.0
 
       # Step 3: Deploy the Databricks Asset Bundle with Overridden Parameters
       # This command works in PowerShell, the default shell for Windows runners.
