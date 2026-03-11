@@ -1,5 +1,5 @@
 # .github/workflows/dynamic-genie-migration.yml
-# ADDED a debug step to print the contents of databricks.yml
+# ADDED a debug step to prove the contents of databricks.yml
 
 name: "Dynamic Databricks Genie Migration (Windows)"
 
@@ -30,7 +30,7 @@ jobs:
       - name: Set up Databricks CLI
         uses: databricks/setup-cli@v0.218.0
 
-      # --- NEW DEBUGGING STEP ---
+      # --- THIS IS THE NEW DEBUGGING STEP ---
       - name: Debug databricks.yml content
         working-directory: ./DB-Genie-Migration
         shell: bash
@@ -38,6 +38,7 @@ jobs:
           echo "--- Start of databricks.yml ---"
           cat databricks.yml
           echo "--- End of databricks.yml ---"
+          echo "Debug step complete. The next step will now run."
 
       # --- DEPLOY STEP ---
       - name: Deploy Databricks Bundle with Dynamic Parameters
