@@ -1,5 +1,5 @@
 # .github/workflows/dynamic-genie-migration.yml
-# FINAL CORRECTION: Using the correct '--var' flag instead of '--vars'.
+# ADDED a debug step to print the contents of databricks.yml
 
 name: "Dynamic Databricks Genie Migration (Windows)"
 
@@ -30,6 +30,16 @@ jobs:
       - name: Set up Databricks CLI
         uses: databricks/setup-cli@v0.218.0
 
+      # --- NEW DEBUGGING STEP ---
+      - name: Debug databricks.yml content
+        working-directory: ./DB-Genie-Migration
+        shell: bash
+        run: |
+          echo "--- Start of databricks.yml ---"
+          cat databricks.yml
+          echo "--- End of databricks.yml ---"
+
+      # --- DEPLOY STEP ---
       - name: Deploy Databricks Bundle with Dynamic Parameters
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
@@ -39,10 +49,8 @@ jobs:
         
         shell: bash
         run: |
-          # Construct the dynamic name for the new Genie Space
           NEW_NAME="Migrated Space - ${{ github.event.inputs.target_catalog }}"
           
-          # Deploy the bundle, overriding variables with the correct --var syntax
           databricks bundle deploy --target dev \
             --var="source_genie_space_id=${{ github.event.inputs.source_genie_space_id }}" \
             --var="source_catalog_name=${{ github.event.inputs.source_catalog }}" \
