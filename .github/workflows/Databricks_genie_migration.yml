@@ -1,5 +1,5 @@
 # .github/workflows/dynamic-genie-migration.yml
-# CORRECTED to handle the nested project directory structure.
+# FINAL CORRECTION: Using the correct '--var' flag instead of '--vars'.
 
 name: "Dynamic Databricks Genie Migration (Windows)"
 
@@ -35,8 +35,6 @@ jobs:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         
-        # THIS IS THE FIX: Tell this step to run from inside the nested folder
-        # where your databricks.yml file is located.
         working-directory: ./DB-Genie-Migration
         
         shell: bash
@@ -44,10 +42,9 @@ jobs:
           # Construct the dynamic name for the new Genie Space
           NEW_NAME="Migrated Space - ${{ github.event.inputs.target_catalog }}"
           
-          # Deploy the bundle, overriding the variables
-          databricks bundle deploy --target dev --vars "{
-            \"source_genie_space_id\": \"${{ github.event.inputs.source_genie_space_id }}\",
-            \"source_catalog_name\": \"${{ github.event.inputs.source_catalog }}\",
-            \"target_catalog_name\": \"${{ github.event.inputs.target_catalog }}\",
-            \"new_genie_space_name\": \"$NEW_NAME\"
-          }"
+          # Deploy the bundle, overriding variables with the correct --var syntax
+          databricks bundle deploy --target dev \
+            --var="source_genie_space_id=${{ github.event.inputs.source_genie_space_id }}" \
+            --var="source_catalog_name=${{ github.event.inputs.source_catalog }}" \
+            --var="target_catalog_name=${{ github.event.inputs.target_catalog }}" \
+            --var="new_genie_space_name=$NEW_NAME"
